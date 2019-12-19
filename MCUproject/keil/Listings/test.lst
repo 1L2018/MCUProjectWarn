@@ -1,0 +1,34 @@
+A51 MACRO ASSEMBLER  TEST                                                                 12/13/2019 16:46:27 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\test.obj
+ASSEMBLER INVOKED BY: D:\creating\proteus+keil\keil_c51\C51\BIN\A51.EXE test.a51 SET(SMALL) DEBUG PRINT(.\Listings\test.
+                      lst) OBJECT(.\Objects\test.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     ORG 0000H
+0000                   2             MAIN:
+0000 759000            3                     MOV P1,#00H
+0003 C290              4                     CLR P1.0
+0005 B200              5                     CPL P1
+*** _____________________________________________^
+*** ERROR #A48 IN 5 (test.a51, LINE 5): DATA-ADDRESS EXPECTED
+                       6                     END
+A51 MACRO ASSEMBLER  TEST                                                                 12/13/2019 16:46:27 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+MAIN . . . . . . .  C ADDR   0000H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 1 ERROR(S)
