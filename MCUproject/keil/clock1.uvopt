@@ -91,8 +91,8 @@
         </Book>
       </Books>
       <DebugOpt>
-        <uSim>0</uSim>
-        <uTrg>1</uTrg>
+        <uSim>1</uSim>
+        <uTrg>0</uTrg>
         <sLdApp>1</sLdApp>
         <sGomain>1</sGomain>
         <sRbreak>1</sRbreak>
@@ -158,7 +158,7 @@
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>CLOCK1.C</Filename>
+          <Filename>C:\Users\Liu\Desktop\MCUproject\MCUproject\keil\CLOCK1.C</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\CLOCK1\128</Expression>
         </Bp>
@@ -174,7 +174,7 @@
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>CLOCK1.C</Filename>
+          <Filename>C:\Users\Liu\Desktop\MCUproject\MCUproject\keil\CLOCK1.C</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\CLOCK1\130</Expression>
         </Bp>
@@ -190,7 +190,7 @@
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>CLOCK1.C</Filename>
+          <Filename>C:\Users\Liu\Desktop\MCUproject\MCUproject\keil\CLOCK1.C</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\CLOCK1\87</Expression>
         </Bp>
@@ -206,7 +206,7 @@
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>CLOCK1.C</Filename>
+          <Filename>C:\Users\Liu\Desktop\MCUproject\MCUproject\keil\CLOCK1.C</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\CLOCK1\42</Expression>
         </Bp>
@@ -215,7 +215,7 @@
         <Mm>
           <WinNumber>1</WinNumber>
           <SubType>0</SubType>
-          <ItemText>i:0x80</ItemText>
+          <ItemText>i:30h</ItemText>
           <AccSizeX>0</AccSizeX>
         </Mm>
       </MemoryWindow1>

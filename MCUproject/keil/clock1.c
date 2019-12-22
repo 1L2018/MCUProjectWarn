@@ -1,8 +1,17 @@
+/*
+	本程序的功能控制如下：
+	通过一块7S-EG-MPX8-CA-BLUE实现时间的显示（包括记录下的时间和当前时间），
+  反复查询   按钮1（p3.4）低电平 可以查看保存的时间、睡觉次数
+	外部中断 1 按钮2（p3.3）下降沿 可以控制报警的启停
+	外部中断 0 按钮3（p3.2）下降沿 可以重置countwaring，即重置报警的状态，让LED和喇叭停止
+	当前时间的实现是通过工作在方式一的T0溢出中断实现，计数次数设为每50000次发生一次中断，满20次为一秒，满60s为1min，满60min为1h
+	LED灯闪烁、喇叭响频率由T1控制
+*/
 #include <REG52.h>
 #include <absacc.h>
 #define uint unsigned int 
 #define uchar unsigned char
-#define LENGTH 700
+#define LENGTH 50000    //50000
 sfr IPH =0xB7;
 sbit RED = P1^2;
 sbit YELLOW = P1^3;
@@ -28,35 +37,35 @@ void display(uchar sec1,uchar min1,uchar hour1)
 {
    P2=0x80;
    P0=table[sec1%10];                   //显示秒个位
-   delayms(50);
+   delayms(5);
 
    P2=0x40;
    P0=table[sec1/10];                  //显示秒十位
-   delayms(50);
+   delayms(5);
 
    P2=0x20;                                  //显示横线
    P0=0xbf;
-   delayms(50);
+   delayms(5);
 
    P2=0x10;                                          //显示分个位
    P0=table[min1%10];
-   delayms(50);
+   delayms(5);
 
    P2=0x08;                                          //显示分十位
    P0=table[min1/10];
-   delayms(50);
+   delayms(5);
 
    P2=0x04;                              //显示横线
    P0=0xbf;
-   delayms(50);
+   delayms(5);
 
    P2=0x02;                                           //显示时个位
    P0=table[hour1%10];
-   delayms(50);
+   delayms(5);
 
    P2=0x01;  //显示时十位
    P0=table[hour1/10];
-   delayms(50);
+   delayms(5);
 }
 
 /*
@@ -69,7 +78,6 @@ void display(uchar sec1,uchar min1,uchar hour1)
 void main(void){
 		SP = 0x60;
 		P1=0;
-
 		TH0 = (65536-LENGTH)/256;
 		TL0 = (65536-LENGTH)%256;
 		TMOD = 0x11;
@@ -95,27 +103,32 @@ void exint0(void) interrupt 0 {  // 将警报计时清0
 	P1 = 0;
 	TR1 = 0;
 }
-void exint1(void) interrupt 2 {
+void exint1(void) interrupt 2 {  // 启/停报警功能
 	ET1 = !ET1;  //控制T1的溢出中断
 	countwaring = 0;
 	TR1=0;
 	P1 = 0;
 	TH1 = 0;
 	TL1 = 0;
-	flagwaringstart = !flagwaringstart;
+	flagwaringstart = !flagwaringstart;  // 控制警告位，防止在T0中断中启动T1
 }
-void timer1int(void) interrupt 3{
+void timer1int(void) interrupt 3{  // 定时器1 控制红/黄灯闪烁、喇叭响声的频率
 	
 	if(countwaring<60){TH1 = 0;TL1 = 0;YELLOW = !YELLOW;RED = 0;}
 	if(countwaring>59){TH1 = 30000/256;TL1 = 30000%256;YELLOW = 0;RED = !RED;}
-	
 	BUZZER = !BUZZER;
 }
-void timer0int(void) interrupt 1{
+void timer0int(void) interrupt 1{  // 通过T0中断 显示时间从开机到现在的时间
 	TH0 = (65536-LENGTH)/256;
 	TL0 = (65536-LENGTH)%256;
 	count1s++;
-	if(countwaring == 11 && !SEC && count1s == 1 && flagwaringstart)  // 离上一次按下按钮过去11min启动黄灯闪烁
+	/*
+		离上一次按下按钮过去11min启动黄灯闪烁，当countwaring = 11（按分钟加一）
+		时有多次中断的发生，而if在countwaring = 11时只能执行一次，有SEC和count1s的判断
+		flagwaringstart，通过P3.3控制防止T1在停止报警时启动
+		countwaring = 60时，同理 
+	*/
+	if(countwaring == 11 && !SEC && count1s == 1 && flagwaringstart)  
 			{	TR1 = 0;
 				TH1 = 0;
 				TL1 = 0;
@@ -147,6 +160,4 @@ void timer0int(void) interrupt 1{
 			}
 		}
 	}
-	
-
 }
