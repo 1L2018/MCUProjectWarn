@@ -1,0 +1,137 @@
+C51 COMPILER V9.60.0.0   CLOCK                                                             12/13/2019 15:00:39 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE CLOCK
+OBJECT MODULE PLACED IN .\Objects\clock.obj
+COMPILER INVOKED BY: D:\creating\proteus+keil\keil_c51\C51\BIN\C51.EXE clock.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTE
+                    -ND PRINT(.\Listings\clock.lst) TABS(2) OBJECT(.\Objects\clock.obj)
+
+line level    source
+
+   1          #include<REG52.h>
+   2          #define uint unsigned int 
+   3          #define uchar unsigned char 
+   4          sfr T2MOD = 0xC9;
+   5          sfr IPH = 0xB7;
+   6          uint HOUR = 0x00;
+   7          uint MIN = 0x00;
+   8          uint SEC = 0x00;
+   9          uint count1s = 0x00;//达一秒计数
+  10          uint countwaring = 0; //每min计一数，达11/60
+  11          uchar code table[]={0xc0,0xf9,0xa4,0xb0,0x99,0x92,0x82,0xf8,0x80,0x90};        //共阳极数码管断码表
+  12          void delayms(uint xms)
+  13          {
+  14   1         uint i,j;
+  15   1         for(i=xms;i>0;i--)
+  16   1               for(j=120;j>0;j--);
+  17   1      }
+  18          void display(void)
+  19          {
+  20   1         P2=0x80;
+  21   1         P0=table[SEC%10];                   //显示秒个位
+  22   1         delayms(50);
+  23   1      
+  24   1         P2=0x40;
+  25   1         P0=table[SEC/10];                  //显示秒十位
+  26   1         delayms(50);
+  27   1      
+  28   1         P2=0x20;                                  //显示横线
+  29   1         P0=0xbf;
+  30   1         delayms(50);
+  31   1      
+  32   1         P2=0x10;                                          //显示分个位
+  33   1         P0=table[MIN%10];
+  34   1         delayms(50);
+  35   1      
+  36   1         P2=0x08;                                          //显示分十位
+  37   1         P0=table[MIN/10];
+  38   1         delayms(50);
+  39   1      
+  40   1         P2=0x04;                              //显示横线
+  41   1         P0=0xbf;
+  42   1         delayms(50);
+  43   1      
+  44   1         P2=0x02;                                           //显示时个位
+  45   1         P0=table[HOUR%10];
+  46   1         delayms(50);
+  47   1      
+  48   1         P2=0x01;                                          //显示时十位
+  49   1         P0=table[HOUR/10];
+  50   1         delayms(50);
+  51   1      }
+  52          void main(void){
+  53   1          SP = 0x60;
+  54   1          P1=0;
+C51 COMPILER V9.60.0.0   CLOCK                                                             12/13/2019 15:00:39 PAGE 2   
+
+  55   1          T2MOD = 0x00;
+  56   1          T2CON = 0x00;
+  57   1          TH2 = (65536-50000)/256;
+  58   1          TL2 = (65536-50000)%256;
+  59   1          TCON = 0x01;
+  60   1          RCAP2L = TL2;
+  61   1          RCAP2H = TH2;
+  62   1          IP = 0x01;
+  63   1          IPH = 0x21;
+  64   1          IE = 0xA1;
+  65   1          TR2 = 1;
+  66   1          while(1){
+  67   2            display();
+  68   2            if(countwaring>10 && countwaring<60)
+  69   2              P1 = 0x08;
+  70   2            if(countwaring>59)
+  71   2              P1 = 0x04;
+  72   2          }
+  73   1      }
+  74          void exint0(void) interrupt 0 {
+  75   1        countwaring = 0;
+  76   1        P1 = 0;
+  77   1      }
+  78          void timer2int(void) interrupt 5{
+  79   1        count1s++;
+  80   1        if(count1s>19)//计数时分秒
+  81   1        {
+  82   2          count1s = 0;
+  83   2          SEC++;
+  84   2          if(SEC>59){
+  85   3            SEC = 0;
+  86   3            MIN++;
+  87   3            countwaring++;
+  88   3            if(MIN>59){
+  89   4              MIN = 0;
+  90   4              HOUR++;
+  91   4              if(HOUR>23)HOUR = 0;
+  92   4            }
+  93   3          }
+  94   2        }
+  95   1        
+  96   1      
+  97   1      }
+  98          /*sbit P16 = P1^3;
+  99          void main(){
+ 100            SP = 0x60;
+ 101            T2MOD = 0x00;
+ 102            T2CON = 0x04;
+ 103            TL2 = 0x18;TH2 = 0xFC;
+ 104            RCAP2H = 0xFC;RCAP2L = 0x18;
+ 105            IE=0xa0;
+ 106            IP = 0x20; IPH = 0x20;
+ 107            while(1){
+ 108              if(TF2){TF2 = 0;P16 = !P16;}}
+ 109            }*/
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    388    ----
+   CONSTANT SIZE    =     10    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+C51 COMPILER V9.60.0.0   CLOCK                                                             12/13/2019 15:00:39 PAGE 3   
+
+   DATA SIZE        =     10    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
