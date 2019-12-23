@@ -54,6 +54,9 @@
      <ITEM name="TopLineAddress">00000080</ITEM>
     </PROPERTIES>
    </POPUP>
+   <POPUP w="55" x="48" flags="00000008" y="160" h="22" pid="1" iid="15">
+    <PROPERTIES/>
+   </POPUP>
   </PWI>
  </MODULE>
 </WORKSPACE>
