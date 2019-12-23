@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    12/23/2019  20:36:53  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    12/23/2019  21:02:17  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22.2.0, INVOKED BY:
@@ -40,13 +40,13 @@ LINK MAP OF MODULE:  .\Objects\clock1 (CLOCK1)
             CODE    001EH     00CAH     UNIT         ?PR?TIMER0INT?CLOCK1
             CODE    00E8H     008CH     UNIT         ?C_C51STARTUP
             CODE    0174H     0071H     UNIT         ?PR?MAIN?CLOCK1
-            CODE    01E5H     0058H     UNIT         ?PR?_DISPLAY?CLOCK1
-            CODE    023DH     0043H     UNIT         ?PR?TIMER1INT?CLOCK1
-            CODE    0280H     0030H     UNIT         ?PR?_DELAYMS?CLOCK1
-            CODE    02B0H     002CH     UNIT         ?PR?EXINT1?CLOCK1
-            CODE    02DCH     0016H     UNIT         ?C_INITSEG
-            CODE    02F2H     000AH     UNIT         ?CO?CLOCK1
-            CODE    02FCH     0009H     UNIT         ?PR?EXINT0?CLOCK1
+            CODE    01E5H     006EH     UNIT         ?PR?_DISPLAY?CLOCK1
+            CODE    0253H     0043H     UNIT         ?PR?TIMER1INT?CLOCK1
+            CODE    0296H     002EH     UNIT         ?PR?_DELAYMS?CLOCK1
+            CODE    02C4H     002CH     UNIT         ?PR?EXINT1?CLOCK1
+            CODE    02F0H     0016H     UNIT         ?C_INITSEG
+            CODE    0306H     000AH     UNIT         ?CO?CLOCK1
+            CODE    0310H     0009H     UNIT         ?PR?EXINT0?CLOCK1
 
 
 
@@ -59,7 +59,7 @@ SEGMENT                          DATA_GROUP
 ?C_C51STARTUP                  -----    -----
   +--> ?PR?MAIN?CLOCK1
   +--> ?C_INITSEG
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  12/23/2019  20:36:53  PAGE 2
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  12/23/2019  21:02:17  PAGE 2
 
 
 
@@ -86,12 +86,12 @@ SYMBOL TABLE OF MODULE:  .\Objects\clock1 (CLOCK1)
   D:0090H         PUBLIC        P1
   D:00B0H         PUBLIC        P3
   I:0012H         PUBLIC        iADDR
-  C:02F2H         PUBLIC        table
+  C:0306H         PUBLIC        table
   D:00A8H         PUBLIC        IE
   B:00B0H.4       PUBLIC        DISPLAY
   D:00B8H         PUBLIC        IP
   C:001EH         PUBLIC        timer0int
-  C:023DH         PUBLIC        timer1int
+  C:0253H         PUBLIC        timer1int
   D:0081H         PUBLIC        SP
   C:0174H         PUBLIC        main
   D:0098H         PUBLIC        SCON
@@ -108,40 +108,40 @@ SYMBOL TABLE OF MODULE:  .\Objects\clock1 (CLOCK1)
   D:008BH         PUBLIC        TL1
   B:0088H.4       PUBLIC        TR0
   B:0088H.6       PUBLIC        TR1
-  C:02FCH         PUBLIC        exint0
+  C:0310H         PUBLIC        exint0
   D:000CH         PUBLIC        flagwaringstart
   D:000DH         PUBLIC        SEC
   B:0090H.2       PUBLIC        RED
-  C:02B0H         PUBLIC        exint1
+  C:02C4H         PUBLIC        exint1
   B:0090H.3       PUBLIC        YELLOW
   D:00B7H         PUBLIC        IPH
   D:000EH         PUBLIC        MIN
   B:0090H.4       PUBLIC        BUZZER
   D:00C8H         PUBLIC        T2CON
   D:000FH         PUBLIC        j
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  12/23/2019  20:36:53  PAGE 3
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  12/23/2019  21:02:17  PAGE 3
 
 
-  C:0292H         PUBLIC        _delayms
+  C:02A6H         PUBLIC        _delayms
   C:01E5H         PUBLIC        _display
   D:00D0H         PUBLIC        PSW
-  C:0280H         SYMBOL        L?0034
-  C:0286H         SYMBOL        L?0035
+  C:029AH         SYMBOL        L?0034
+  C:029EH         SYMBOL        L?0035
   -------         PROC          L?0033
   -------         ENDPROC       L?0033
-  C:0280H         SYMBOL        L?0034
-  C:0286H         SYMBOL        L?0035
+  C:029AH         SYMBOL        L?0034
+  C:029EH         SYMBOL        L?0035
   -------         PROC          _DELAYMS
   D:0006H         SYMBOL        xms
   -------         DO            
   D:0006H         SYMBOL        i
   D:0004H         SYMBOL        j
   -------         ENDDO         
-  C:0292H         LINE#         34
-  C:0292H         LINE#         35
-  C:0292H         LINE#         37
-  C:029BH         LINE#         38
-  C:02AFH         LINE#         39
+  C:02A6H         LINE#         34
+  C:02A6H         LINE#         35
+  C:02A6H         LINE#         37
+  C:02AFH         LINE#         38
+  C:02C3H         LINE#         39
   -------         ENDPROC       _DELAYMS
   -------         PROC          _DISPLAY
   D:0001H         SYMBOL        sec1
@@ -151,22 +151,22 @@ SYMBOL TABLE OF MODULE:  .\Objects\clock1 (CLOCK1)
   C:01E9H         LINE#         41
   C:01E9H         LINE#         42
   C:01EFH         LINE#         43
-  C:01F0H         LINE#         44
-  C:01F3H         LINE#         46
-  C:01F9H         LINE#         47
-  C:01FEH         LINE#         48
-  C:0201H         LINE#         54
-  C:0207H         LINE#         55
-  C:0208H         LINE#         56
-  C:020BH         LINE#         58
-  C:0211H         LINE#         59
-  C:0216H         LINE#         60
-  C:0219H         LINE#         66
-  C:021FH         LINE#         67
-  C:0220H         LINE#         68
-  C:0223H         LINE#         70
-  C:0229H         LINE#         71
-  C:0236H         LINE#         72
+  C:01F6H         LINE#         44
+  C:01F9H         LINE#         46
+  C:01FFH         LINE#         47
+  C:0200H         LINE#         48
+  C:0203H         LINE#         54
+  C:0209H         LINE#         55
+  C:0216H         LINE#         56
+  C:0219H         LINE#         58
+  C:021FH         LINE#         59
+  C:0220H         LINE#         60
+  C:0223H         LINE#         66
+  C:0229H         LINE#         67
+  C:0236H         LINE#         68
+  C:0239H         LINE#         70
+  C:023FH         LINE#         71
+  C:024CH         LINE#         72
   -------         ENDPROC       _DISPLAY
   -------         PROC          MAIN
   -------         DO            
@@ -179,7 +179,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\clock1 (CLOCK1)
   C:0180H         LINE#         86
   C:0183H         LINE#         87
   C:0186H         LINE#         88
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  12/23/2019  20:36:53  PAGE 4
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  12/23/2019  21:02:17  PAGE 4
 
 
   C:0189H         LINE#         89
@@ -197,29 +197,29 @@ SYMBOL TABLE OF MODULE:  .\Objects\clock1 (CLOCK1)
   C:01E1H         LINE#         101
   -------         ENDPROC       MAIN
   -------         PROC          EXINT0
-  C:02FCH         LINE#         105
-  C:02FCH         LINE#         106
-  C:02FFH         LINE#         107
-  C:0302H         LINE#         108
-  C:0304H         LINE#         109
+  C:0310H         LINE#         105
+  C:0310H         LINE#         106
+  C:0313H         LINE#         107
+  C:0316H         LINE#         108
+  C:0318H         LINE#         109
   -------         ENDPROC       EXINT0
   -------         PROC          EXINT1
-  C:02B0H         LINE#         110
-  C:02B9H         LINE#         111
-  C:02BBH         LINE#         112
-  C:02BEH         LINE#         113
-  C:02C0H         LINE#         114
-  C:02C3H         LINE#         115
-  C:02C6H         LINE#         116
-  C:02C9H         LINE#         117
-  C:02D5H         LINE#         118
+  C:02C4H         LINE#         110
+  C:02CDH         LINE#         111
+  C:02CFH         LINE#         112
+  C:02D2H         LINE#         113
+  C:02D4H         LINE#         114
+  C:02D7H         LINE#         115
+  C:02DAH         LINE#         116
+  C:02DDH         LINE#         117
+  C:02E9H         LINE#         118
   -------         ENDPROC       EXINT1
   -------         PROC          TIMER1INT
-  C:023DH         LINE#         119
-  C:0248H         LINE#         121
-  C:0260H         LINE#         122
-  C:0275H         LINE#         123
-  C:0277H         LINE#         124
+  C:0253H         LINE#         119
+  C:025EH         LINE#         121
+  C:0276H         LINE#         122
+  C:028BH         LINE#         123
+  C:028DH         LINE#         124
   -------         ENDPROC       TIMER1INT
   -------         PROC          TIMER0INT
   C:001EH         LINE#         125
@@ -239,7 +239,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\clock1 (CLOCK1)
   C:0072H         LINE#         145
   C:0074H         LINE#         147
   C:007FH         LINE#         148
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  12/23/2019  20:36:53  PAGE 5
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  12/23/2019  21:02:17  PAGE 5
 
 
   C:008AH         LINE#         149
@@ -264,5 +264,5 @@ SYMBOL TABLE OF MODULE:  .\Objects\clock1 (CLOCK1)
   -------         ENDPROC       TIMER0INT
   -------         ENDMOD        CLOCK1
 
-Program Size: data=55.0 xdata=0 code=758
+Program Size: data=55.0 xdata=0 code=778
 LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

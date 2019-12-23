@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   CLOCK1                                                            12/23/2019 20:36:52 PAGE 1   
+C51 COMPILER V9.60.0.0   CLOCK1                                                            12/23/2019 21:02:17 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE CLOCK1
@@ -25,7 +25,7 @@ line level    source
   14          #define PA8255 0xff7c  //外部82C55 A口
   15          #define PC8255 0xff7e //外部82C55 C口
   16          #define COM8255 0xff7f //82C55 控制口
-  17          #define LENGTH 50000     //50000
+  17          #define LENGTH 500     //50000
   18          sfr IPH =0xB7;
   19          sbit RED = P1^2;
   20          sbit YELLOW = P1^3;
@@ -36,7 +36,7 @@ line level    source
   25          uchar SEC = 0x00;
   26          uchar sleepcount = 0;//睡觉次数
   27          uchar flagwaringstart = 0; //启动T1计时
-  28          uchar count1s = 0x00;//达一秒计数，20次 -- 1 秒
+  28          uchar count1s = 0x00; //达一秒计数，20次 -- 1 秒
   29          uchar countwaring = 0; //每min计一数，达11/60
   30          uchar code table[]={0xc0,0xf9,0xa4,0xb0,0x99,0x92,0x82,0xf8,0x80,0x90};        //共阳极数码管段码表
   31          uchar idata iADDR[36];  // 保存事件及睡觉次数
@@ -62,10 +62,10 @@ line level    source
   51   1         P0=0xbf;
   52   1         delayms(5);
   53   1      */
-C51 COMPILER V9.60.0.0   CLOCK1                                                            12/23/2019 20:36:52 PAGE 2   
+C51 COMPILER V9.60.0.0   CLOCK1                                                            12/23/2019 21:02:17 PAGE 2   
 
   54   1          XBYTE[PC8255]=0x04;                                          //显示分个位
-  55   1         XBYTE[PA8255]=table[min1%10];
+  55   1         XBYTE[PA8255]=table[min1%10]&0x7f;
   56   1         delayms(5);
   57   1      
   58   1          XBYTE[PC8255]=0x08;                                          //显示分十位
@@ -77,7 +77,7 @@ line level    source
   64   1         delayms(5);
   65   1      */
   66   1          XBYTE[PC8255]=0x10;                                           //显示时个位
-  67   1         XBYTE[PA8255]=table[hour1%10];
+  67   1         XBYTE[PA8255]=table[hour1%10]&0x7f;    //八段数码管显示小数点仅需要在段选码后 + &0x7F !!!
   68   1         delayms(5);
   69   1      
   70   1          XBYTE[PC8255]=0x20;  //显示时十位
@@ -126,7 +126,7 @@ line level    source
  113   1        TR1=0;
  114   1        P1 = 0;
  115   1        TH1 = 0;
-C51 COMPILER V9.60.0.0   CLOCK1                                                            12/23/2019 20:36:52 PAGE 3   
+C51 COMPILER V9.60.0.0   CLOCK1                                                            12/23/2019 21:02:17 PAGE 3   
 
  116   1        TL1 = 0;
  117   1        flagwaringstart = !flagwaringstart;  // 控制警告位，防止在T0中断中启动T1
@@ -184,13 +184,13 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    571    ----
+   CODE SIZE        =    591    ----
    CONSTANT SIZE    =     10    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =      8       2
    IDATA SIZE       =     36    ----
-C51 COMPILER V9.60.0.0   CLOCK1                                                            12/23/2019 20:36:52 PAGE 4   
+C51 COMPILER V9.60.0.0   CLOCK1                                                            12/23/2019 21:02:17 PAGE 4   
 
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
