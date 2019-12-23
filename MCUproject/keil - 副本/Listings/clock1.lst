@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   CLOCK1                                                            12/23/2019 19:37:00 PAGE 1   
+C51 COMPILER V9.60.0.0   CLOCK1                                                            12/23/2019 20:36:52 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE CLOCK1
@@ -22,169 +22,176 @@ line level    source
   11          #include <absacc.h>
   12          #define uint unsigned int 
   13          #define uchar unsigned char
-  14          #define LENGTH 500    //50000
-  15          sfr IPH =0xB7;
-  16          sbit RED = P1^2;
-  17          sbit YELLOW = P1^3;
-  18          sbit BUZZER = P1^4;
-  19          sbit DISPLAY = P3^4;
-  20          uchar HOUR = 0x00;
-  21          uchar MIN = 0x00;
-  22          uchar SEC = 0x00;
-  23          uchar sleepcount = 0;//睡觉次数
-  24          uchar flagwaringstart = 0; //启动T1计时
-  25          uchar count1s = 0x00;//达一秒计数，20次 -- 1 秒
-  26          uchar countwaring = 0; //每min计一数，达11/60
-  27          uchar code table[]={0xc0,0xf9,0xa4,0xb0,0x99,0x92,0x82,0xf8,0x80,0x90};        //共阳极数码管断码表
-  28          uchar idata iADDR[36];  // 保存事件及睡觉次数
-  29          uchar j;
-  30          void delayms(uint xms)
-  31          {
-  32   1         uint i,j;
-  33   1         for(i=xms;i>0;i--)
-  34   1               for(j=120;j>0;j--);
-  35   1      }
-  36          void display(uchar sec1,uchar min1,uchar hour1)
-  37          {
-  38   1         P2=0x80;
-  39   1         P0=table[sec1%10];                   //显示秒个位
-  40   1         delayms(5);
-  41   1      
-  42   1         P2=0x40;
-  43   1         P0=table[sec1/10];                  //显示秒十位
+  14          #define PA8255 0xff7c  //外部82C55 A口
+  15          #define PC8255 0xff7e //外部82C55 C口
+  16          #define COM8255 0xff7f //82C55 控制口
+  17          #define LENGTH 50000     //50000
+  18          sfr IPH =0xB7;
+  19          sbit RED = P1^2;
+  20          sbit YELLOW = P1^3;
+  21          sbit BUZZER = P1^4;
+  22          sbit DISPLAY = P3^4;
+  23          uchar HOUR = 0x00;
+  24          uchar MIN = 0x00;
+  25          uchar SEC = 0x00;
+  26          uchar sleepcount = 0;//睡觉次数
+  27          uchar flagwaringstart = 0; //启动T1计时
+  28          uchar count1s = 0x00;//达一秒计数，20次 -- 1 秒
+  29          uchar countwaring = 0; //每min计一数，达11/60
+  30          uchar code table[]={0xc0,0xf9,0xa4,0xb0,0x99,0x92,0x82,0xf8,0x80,0x90};        //共阳极数码管段码表
+  31          uchar idata iADDR[36];  // 保存事件及睡觉次数
+  32          uchar j;
+  33          
+  34          void delayms(uint xms)
+  35          {
+  36   1         uint i,j;
+  37   1         for(i=xms;i>0;i--)
+  38   1               for(j=120;j>0;j--);
+  39   1      }
+  40          void display(uchar sec1,uchar min1,uchar hour1)
+  41          {
+  42   1         XBYTE[PC8255] = 0x01;
+  43   1         XBYTE[PA8255] = table[sec1%10];                   //显示秒个位
   44   1         delayms(5);
   45   1      
-  46   1         P2=0x20;                                  //显示横线
-  47   1         P0=0xbf;
+  46   1          XBYTE[PC8255]=0x02;
+  47   1         XBYTE[PA8255]=table[sec1/10];                  //显示秒十位
   48   1         delayms(5);
-  49   1      
-  50   1         P2=0x10;                                          //显示分个位
-  51   1         P0=table[min1%10];
+  49   1      /*
+  50   1         P2=0x03;                                  //显示横线
+  51   1         P0=0xbf;
   52   1         delayms(5);
-  53   1      
-C51 COMPILER V9.60.0.0   CLOCK1                                                            12/23/2019 19:37:00 PAGE 2   
+  53   1      */
+C51 COMPILER V9.60.0.0   CLOCK1                                                            12/23/2019 20:36:52 PAGE 2   
 
-  54   1         P2=0x08;                                          //显示分十位
-  55   1         P0=table[min1/10];
+  54   1          XBYTE[PC8255]=0x04;                                          //显示分个位
+  55   1         XBYTE[PA8255]=table[min1%10];
   56   1         delayms(5);
   57   1      
-  58   1         P2=0x04;                              //显示横线
-  59   1         P0=0xbf;
+  58   1          XBYTE[PC8255]=0x08;                                          //显示分十位
+  59   1         XBYTE[PA8255]=table[min1/10];
   60   1         delayms(5);
-  61   1      
-  62   1         P2=0x02;                                           //显示时个位
-  63   1         P0=table[hour1%10];
+  61   1      /*
+  62   1         P2=0x04;                              //显示横线
+  63   1         P0=0xbf;
   64   1         delayms(5);
-  65   1      
-  66   1         P2=0x01;  //显示时十位
-  67   1         P0=table[hour1/10];
+  65   1      */
+  66   1          XBYTE[PC8255]=0x10;                                           //显示时个位
+  67   1         XBYTE[PA8255]=table[hour1%10];
   68   1         delayms(5);
-  69   1      }
-  70          
-  71          /*
-  72            T0用来显示时间
-  73            T1用来控制灯的闪烁、喇叭的频率
-  74            用countwaring来计算离上一次按下按钮的时间（分钟）
-  75            INT0是重置countwaring
-  76            INT1是控制警报是否启动
-  77          */
-  78          void main(void){
-  79   1          SP = 0x60;
-  80   1          P1=0;
-  81   1          TH0 = (65536-LENGTH)/256;
-  82   1          TL0 = (65536-LENGTH)%256;
-  83   1          TMOD = 0x11;
-  84   1          TCON = 0x05;
-  85   1          IP = 0x01;
-  86   1          IPH = 0x03;
-  87   1          IE = 0x87;//10000111
-  88   1          TR0 = 1;
-  89   1          while(1){
-  90   2            display(SEC,MIN,HOUR);
-  91   2            while(!DISPLAY){
-  92   3              uint a = iADDR[0];
-  93   3              for(j = 0;j < iADDR[0];j++){
-  94   4                display(iADDR[3 + j*3],iADDR[2 + j*3],iADDR[1 + j*3]);
-  95   4                delayms(1000);
-  96   4              }
-  97   3            }
-  98   2          }
-  99   1      }
- 100          void exint0(void) interrupt 0 {  // 将警报计时清0
- 101   1        countwaring = 0;
- 102   1        P1 = 0;
- 103   1        TR1 = 0;
+  69   1      
+  70   1          XBYTE[PC8255]=0x20;  //显示时十位
+  71   1         XBYTE[PA8255]=table[hour1/10];
+  72   1         delayms(5);
+  73   1      }
+  74          
+  75          /*
+  76            T0用来显示时间
+  77            T1用来控制灯的闪烁、喇叭的频率
+  78            用countwaring来计算离上一次按下按钮的时间（分钟）
+  79            INT0是重置countwaring
+  80            INT1是控制警报是否启动
+  81          */
+  82          void main(void){
+  83   1          SP = 0x60;
+  84   1          P1=0;
+  85   1          XBYTE[COM8255] = 0x80;
+  86   1          TH0 = (65536-LENGTH)/256;
+  87   1          TL0 = (65536-LENGTH)%256;
+  88   1          TMOD = 0x11;
+  89   1          TCON = 0x05;
+  90   1          IP = 0x01;
+  91   1          IPH = 0x03;
+  92   1          IE = 0x87;//10000111
+  93   1          TR0 = 1;
+  94   1          while(1){
+  95   2            display(SEC,MIN,HOUR);
+  96   2            while(!DISPLAY){
+  97   3              uint a = iADDR[0];
+  98   3              for(j = 0;j < iADDR[0];j++){
+  99   4                display(iADDR[3 + j*3],iADDR[2 + j*3],iADDR[1 + j*3]);
+ 100   4                delayms(1000);
+ 101   4              }
+ 102   3            }
+ 103   2          }
  104   1      }
- 105          void exint1(void) interrupt 2 {  // 启/停报警功能
- 106   1        ET1 = !ET1;  //控制T1的溢出中断
- 107   1        countwaring = 0;
- 108   1        TR1=0;
- 109   1        P1 = 0;
- 110   1        TH1 = 0;
- 111   1        TL1 = 0;
- 112   1        flagwaringstart = !flagwaringstart;  // 控制警告位，防止在T0中断中启动T1
- 113   1      }
- 114          void timer1int(void) interrupt 3{  // 定时器1 控制红/黄灯闪烁、喇叭响声的频率
- 115   1        
-C51 COMPILER V9.60.0.0   CLOCK1                                                            12/23/2019 19:37:00 PAGE 3   
+ 105          void exint0(void) interrupt 0 {  // 将警报计时清0
+ 106   1        countwaring = 0;
+ 107   1        P1 = 0;
+ 108   1        TR1 = 0;
+ 109   1      }
+ 110          void exint1(void) interrupt 2 {  // 启/停报警功能
+ 111   1        ET1 = !ET1;  //控制T1的溢出中断
+ 112   1        countwaring = 0;
+ 113   1        TR1=0;
+ 114   1        P1 = 0;
+ 115   1        TH1 = 0;
+C51 COMPILER V9.60.0.0   CLOCK1                                                            12/23/2019 20:36:52 PAGE 3   
 
- 116   1        if(countwaring<60){TH1 = 0;TL1 = 0;YELLOW = !YELLOW;RED = 0;}
- 117   1        if(countwaring>59){TH1 = 30000/256;TL1 = 30000%256;YELLOW = 0;RED = !RED;}
- 118   1        BUZZER = !BUZZER;
- 119   1      }
- 120          void timer0int(void) interrupt 1{  // 通过T0中断 显示时间从开机到现在的时间
- 121   1        TH0 = (65536-LENGTH)/256;
- 122   1        TL0 = (65536-LENGTH)%256;
- 123   1        count1s++;
- 124   1        /*
- 125   1          离上一次按下按钮过去11min启动黄灯闪烁，当countwaring = 11（按分钟加一）
- 126   1          时有多次中断的发生，而if在countwaring = 11时只能执行一次，有SEC和count1s的判断
- 127   1          flagwaringstart，通过P3.3控制防止T1在停止报警时启动
- 128   1          countwaring = 60时，同理 
- 129   1        */
- 130   1        if(countwaring == 11 && !SEC && count1s == 1 && flagwaringstart)  
- 131   1            { TR1 = 0;
- 132   2              TH1 = 0;
- 133   2              TL1 = 0;
- 134   2              TR1 = 1;
- 135   2            }
- 136   1        if(countwaring == 60 && !SEC && count1s == 1 && flagwaringstart){  // 离上一次按下按钮过去60min 红灯闪烁 
+ 116   1        TL1 = 0;
+ 117   1        flagwaringstart = !flagwaringstart;  // 控制警告位，防止在T0中断中启动T1
+ 118   1      }
+ 119          void timer1int(void) interrupt 3{  // 定时器1 控制红/黄灯闪烁、喇叭响声的频率
+ 120   1        
+ 121   1        if(countwaring<60){TH1 = 0;TL1 = 0;YELLOW = !YELLOW;RED = 0;}
+ 122   1        if(countwaring>59){TH1 = 30000/256;TL1 = 30000%256;YELLOW = 0;RED = !RED;}
+ 123   1        BUZZER = !BUZZER;
+ 124   1      }
+ 125          void timer0int(void) interrupt 1{  // 通过T0中断 显示时间从开机到现在的时间
+ 126   1        TH0 = (65536-LENGTH)/256;
+ 127   1        TL0 = (65536-LENGTH)%256;
+ 128   1        count1s++;
+ 129   1        /*
+ 130   1          离上一次按下按钮过去11min启动黄灯闪烁，当countwaring = 11（按分钟加一）
+ 131   1          时有多次中断的发生，而if在countwaring = 11时只能执行一次，有SEC和count1s的判断
+ 132   1          flagwaringstart，通过P3.3控制防止T1在停止报警时启动
+ 133   1          countwaring = 60时，同理 
+ 134   1        */
+ 135   1        if(countwaring == 11 && !SEC && count1s == 1 && flagwaringstart)  
+ 136   1            { TR1 = 0;
+ 137   2              TH1 = 0;
+ 138   2              TL1 = 0;
+ 139   2              TR1 = 1;
+ 140   2            }
+ 141   1        if(countwaring == 60 && !SEC && count1s == 1 && flagwaringstart){  // 离上一次按下按钮过去60min 红灯闪烁 
              -喇叭频率加快 保存数据至iADDR数组中
- 137   2          TR1 = 0;
- 138   2          TH1 = 30000/256;
- 139   2          TL1 = 30000%256;
- 140   2          TR1 = 1;
- 141   2          
- 142   2          iADDR[sleepcount*3+1] = HOUR;
- 143   2          iADDR[sleepcount*3+2] = MIN;
- 144   2          iADDR[sleepcount*3+3] = SEC;
- 145   2          iADDR[0] = ++sleepcount;
- 146   2        }
- 147   1        if(count1s>19)//计数时分秒
- 148   1        {
- 149   2          count1s = 0;
- 150   2          SEC++;
- 151   2          if(SEC>59){
- 152   3            SEC = 0;
- 153   3            MIN++;
- 154   3            countwaring++;
- 155   3            if(MIN>59){
- 156   4              MIN = 0;
- 157   4              HOUR++;
- 158   4              if(HOUR>23)HOUR = 0;
- 159   4            }
- 160   3          }
- 161   2        }
- 162   1      }
+ 142   2          TR1 = 0;
+ 143   2          TH1 = 30000/256;
+ 144   2          TL1 = 30000%256;
+ 145   2          TR1 = 1;
+ 146   2          
+ 147   2          iADDR[sleepcount*3+1] = HOUR;
+ 148   2          iADDR[sleepcount*3+2] = MIN;
+ 149   2          iADDR[sleepcount*3+3] = SEC;
+ 150   2          iADDR[0] = ++sleepcount;
+ 151   2        }
+ 152   1        if(count1s>19)//计数时分秒
+ 153   1        {
+ 154   2          count1s = 0;
+ 155   2          SEC++;
+ 156   2          if(SEC>59){
+ 157   3            SEC = 0;
+ 158   3            MIN++;
+ 159   3            countwaring++;
+ 160   3            if(MIN>59){
+ 161   4              MIN = 0;
+ 162   4              HOUR++;
+ 163   4              if(HOUR>23)HOUR = 0;
+ 164   4            }
+ 165   3          }
+ 166   2        }
+ 167   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    564    ----
+   CODE SIZE        =    571    ----
    CONSTANT SIZE    =     10    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =      8       2
    IDATA SIZE       =     36    ----
+C51 COMPILER V9.60.0.0   CLOCK1                                                            12/23/2019 20:36:52 PAGE 4   
+
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
 

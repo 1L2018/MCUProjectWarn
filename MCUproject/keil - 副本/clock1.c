@@ -11,7 +11,10 @@
 #include <absacc.h>
 #define uint unsigned int 
 #define uchar unsigned char
-#define LENGTH 500    //50000
+#define PA8255 0xff7c  //外部82C55 A口
+#define PC8255 0xff7e //外部82C55 C口
+#define COM8255 0xff7f //82C55 控制口
+#define LENGTH 50000     //50000
 sfr IPH =0xB7;
 sbit RED = P1^2;
 sbit YELLOW = P1^3;
@@ -24,9 +27,10 @@ uchar sleepcount = 0;//睡觉次数
 uchar flagwaringstart = 0; //启动T1计时
 uchar count1s = 0x00;//达一秒计数，20次 -- 1 秒
 uchar countwaring = 0; //每min计一数，达11/60
-uchar code table[]={0xc0,0xf9,0xa4,0xb0,0x99,0x92,0x82,0xf8,0x80,0x90};        //共阳极数码管断码表
+uchar code table[]={0xc0,0xf9,0xa4,0xb0,0x99,0x92,0x82,0xf8,0x80,0x90};        //共阳极数码管段码表
 uchar idata iADDR[36];  // 保存事件及睡觉次数
 uchar j;
+
 void delayms(uint xms)
 {
    uint i,j;
@@ -35,36 +39,36 @@ void delayms(uint xms)
 }
 void display(uchar sec1,uchar min1,uchar hour1)
 {
-   P2=0x80;
-   P0=table[sec1%10];                   //显示秒个位
+   XBYTE[PC8255] = 0x01;
+   XBYTE[PA8255] = table[sec1%10];                   //显示秒个位
    delayms(5);
 
-   P2=0x40;
-   P0=table[sec1/10];                  //显示秒十位
+    XBYTE[PC8255]=0x02;
+   XBYTE[PA8255]=table[sec1/10];                  //显示秒十位
    delayms(5);
-
-   P2=0x20;                                  //显示横线
+/*
+   P2=0x03;                                  //显示横线
    P0=0xbf;
    delayms(5);
-
-   P2=0x10;                                          //显示分个位
-   P0=table[min1%10];
+*/
+    XBYTE[PC8255]=0x04;                                          //显示分个位
+   XBYTE[PA8255]=table[min1%10];
    delayms(5);
 
-   P2=0x08;                                          //显示分十位
-   P0=table[min1/10];
+    XBYTE[PC8255]=0x08;                                          //显示分十位
+   XBYTE[PA8255]=table[min1/10];
    delayms(5);
-
+/*
    P2=0x04;                              //显示横线
    P0=0xbf;
    delayms(5);
-
-   P2=0x02;                                           //显示时个位
-   P0=table[hour1%10];
+*/
+    XBYTE[PC8255]=0x10;                                           //显示时个位
+   XBYTE[PA8255]=table[hour1%10];
    delayms(5);
 
-   P2=0x01;  //显示时十位
-   P0=table[hour1/10];
+    XBYTE[PC8255]=0x20;  //显示时十位
+   XBYTE[PA8255]=table[hour1/10];
    delayms(5);
 }
 
@@ -78,6 +82,7 @@ void display(uchar sec1,uchar min1,uchar hour1)
 void main(void){
 		SP = 0x60;
 		P1=0;
+	  XBYTE[COM8255] = 0x80;
 		TH0 = (65536-LENGTH)/256;
 		TL0 = (65536-LENGTH)%256;
 		TMOD = 0x11;

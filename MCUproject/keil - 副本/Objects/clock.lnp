@@ -1,3 +1,0 @@
-".\Objects\test.obj" 
-TO ".\Objects\clock" 
-PRINT(".\Listings\clock.m51") RAMSIZE(256) 
