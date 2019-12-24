@@ -3606,11 +3606,11 @@
       <ActiveTab>0</ActiveTab>
       <Doc>
         <Name>.\clock1.c</Name>
-        <ColumnNumber>73</ColumnNumber>
-        <TopLine>77</TopLine>
-        <CurrentLine>127</CurrentLine>
+        <ColumnNumber>18</ColumnNumber>
+        <TopLine>1</TopLine>
+        <CurrentLine>19</CurrentLine>
         <Folding>1</Folding>
-        <ContractedFolders>36,42,76</ContractedFolders>
+        <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>
       </Doc>
     </MDIGroup>

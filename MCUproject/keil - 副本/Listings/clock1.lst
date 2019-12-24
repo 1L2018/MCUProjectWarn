@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   CLOCK1                                                            12/24/2019 13:08:43 PAGE 1   
+C51 COMPILER V9.60.0.0   CLOCK1                                                            12/24/2019 13:40:16 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE CLOCK1
@@ -17,186 +17,187 @@ line level    source
    7            µ±«∞ ±º‰µƒ µœ÷ «Õ®π˝π§◊˜‘⁄∑Ω Ω“ªµƒT0“Á≥ˆ÷–∂œ µœ÷£¨º∆ ˝¥Œ ˝…ËŒ™√ø50000¥Œ∑¢…˙“ª¥Œ÷–∂œ£¨¬˙20¥ŒŒ™“ª√Î£¨¬˙60sŒ
              -™1min£¨¬˙60minŒ™1h
    8            LEDµ∆…¡À∏°¢¿Æ∞»œÏ∆µ¬ ”…T1øÿ÷∆
-   9          */
-  10          #include <reg51.h>
-  11          #include <absacc.h>
-  12          #include <intrins.h>
-  13          #define uint unsigned int 
-  14          #define uchar unsigned char
-  15          #define PA8255 0xff21  //Õ‚≤ø82C55 bø⁄
-  16          #define PB8255 0xff22 //Õ‚≤ø82C55 Cø⁄
-  17          #define COM8255 0xff20 //82C55 øÿ÷∆ø⁄
-  18          #define LENGTH 500     //50000
-  19          sfr IPH =0xB7;
-  20          sbit RED = P1^2;
-  21          sbit YELLOW = P1^3;
-  22          sbit BUZZER = P1^4;
-  23          sbit DISPLAY = P3^4;
-  24          sbit WHITE = P1^5;
-  25          uchar HOUR = 0x00;
-  26          uchar MIN = 0x00;
-  27          uchar SEC = 0x00;
-  28          uchar sleepcount = 0;//ÀØæı¥Œ ˝
-  29          uchar flagwaringstart = 0; //∆Ù∂ØT1º∆ ±
-  30          uchar count1s = 0x00; //¥Ô“ª√Îº∆ ˝£¨20¥Œ -- 1 √Î
-  31          uchar countwaring = 0; //√øminº∆“ª ˝£¨¥Ô11/60
-  32          uchar code table[]={0xc0,0xf9,0xa4,0xb0,0x99,0x92,0x82,0xf8,0x80,0x90};        //π≤—Ùº´ ˝¬Îπ‹∂Œ¬Î±Ì
-  33          uchar idata iADDR[36];  // ±£¥Ê ¬º˛º∞ÀØæı¥Œ ˝
-  34          uchar j,y,x;
-  35          
-  36          void delayms(uint xms)
-  37          {
-  38   1         uint i,j;
-  39   1         for(i=xms;i>0;i--)
-  40   1               for(j=120;j>0;j--);
-  41   1      }
-  42          void display(uchar sec1,uchar min1,uchar hour1)
-  43          {
-  44   1         XBYTE[PA8255] = 0x3E;  //œ‘ æ√Î∏ˆŒª 111110
-  45   1         XBYTE[PB8255] = table[sec1%10];                   //œ‘ æ√Î∏ˆŒª
-  46   1         delayms(3);
-  47   1         
-  48   1         XBYTE[PA8255]=0x3D;//111101
-  49   1         XBYTE[PB8255]=table[sec1/10];                  //œ‘ æ√Î ÆŒª
-  50   1         delayms(3);
-  51   1      /*
-  52   1         P2=0x03;                                  //œ‘ æ∫·œﬂ
-  53   1         P0=0xbf;
-C51 COMPILER V9.60.0.0   CLOCK1                                                            12/24/2019 13:08:43 PAGE 2   
+   9            T0°¢T1æ˘π§◊˜‘⁄∑Ω Ω1£ª65536
+  10          */
+  11          #include <reg51.h>
+  12          #include <absacc.h>
+  13          #include <intrins.h>
+  14          #define uint unsigned int 
+  15          #define uchar unsigned char
+  16          #define PA8255 0xff21  //Õ‚≤ø82C55 bø⁄
+  17          #define PB8255 0xff22 //Õ‚≤ø82C55 Cø⁄
+  18          #define COM8255 0xff20 //82C55 øÿ÷∆ø⁄
+  19          #define LENGTH 500     //50000
+  20          sfr IPH =0xB7;
+  21          sbit RED = P1^2;
+  22          sbit YELLOW = P1^3;
+  23          sbit BUZZER = P1^4;
+  24          sbit DISPLAY = P3^4;
+  25          sbit WHITE = P1^5;
+  26          uchar HOUR = 0x00;
+  27          uchar MIN = 0x00;
+  28          uchar SEC = 0x00;
+  29          uchar sleepcount = 0;//ÀØæı¥Œ ˝
+  30          uchar flagwaringstart = 0; //∆Ù∂ØT1º∆ ±
+  31          uchar count1s = 0x00; //¥Ô“ª√Îº∆ ˝£¨20¥Œ -- 1 √Î
+  32          uchar countwaring = 0; //√øminº∆“ª ˝£¨¥Ô11/60
+  33          uchar code table[]={0xc0,0xf9,0xa4,0xb0,0x99,0x92,0x82,0xf8,0x80,0x90};        //π≤—Ùº´ ˝¬Îπ‹∂Œ¬Î±Ì
+  34          uchar idata iADDR[36];  // ±£¥Ê ¬º˛º∞ÀØæı¥Œ ˝
+  35          uchar j,y,x;
+  36          
+  37          void delayms(uint xms)
+  38          {
+  39   1         uint i,j;
+  40   1         for(i=xms;i>0;i--)
+  41   1               for(j=120;j>0;j--);
+  42   1      }
+  43          void display(uchar sec1,uchar min1,uchar hour1)
+  44          {
+  45   1         XBYTE[PA8255] = 0x3E;  //œ‘ æ√Î∏ˆŒª 111110
+  46   1         XBYTE[PB8255] = table[sec1%10];                   //œ‘ æ√Î∏ˆŒª
+  47   1         delayms(3);
+  48   1         
+  49   1         XBYTE[PA8255]=0x3D;//111101
+  50   1         XBYTE[PB8255]=table[sec1/10];                  //œ‘ æ√Î ÆŒª
+  51   1         delayms(3);
+  52   1      /*
+  53   1         P2=0x03;                                  //œ‘ æ∫·œﬂ
+C51 COMPILER V9.60.0.0   CLOCK1                                                            12/24/2019 13:40:16 PAGE 2   
 
-  54   1         delayms(5);
-  55   1      */
-  56   1         XBYTE[PA8255]=0x3B; //111011                                         //œ‘ æ∑÷∏ˆŒª
-  57   1         XBYTE[PB8255]=table[min1%10]&0x7f;
-  58   1         delayms(3);
-  59   1      
-  60   1         XBYTE[PA8255]=0x37; //110111                                         //œ‘ æ∑÷ ÆŒª
-  61   1         XBYTE[PB8255]=table[min1/10];
-  62   1         delayms(3);
-  63   1      /*
-  64   1         P2=0x04;                              //œ‘ æ∫·œﬂ
-  65   1         P0=0xbf;
-  66   1         delayms(5);
-  67   1      */
-  68   1         XBYTE[PA8255]=0x2F;         //101111                                  //œ‘ æ ±∏ˆŒª
-  69   1         XBYTE[PB8255]=table[hour1%10]&0x7f;    //∞À∂Œ ˝¬Îπ‹œ‘ æ–° ˝µ„Ωˆ–Ë“™‘⁄∂Œ—°¬Î∫Û + &0x7F !!!
-  70   1         delayms(3);
-  71   1      
-  72   1         XBYTE[PA8255]=0x1f;//011111
-  73   1         XBYTE[PB8255]=table[hour1/10];
-  74   1         delayms(3);
-  75   1      }
-  76          
-  77          /*
-  78            T0”√¿¥œ‘ æ ±º‰
-  79            T1”√¿¥øÿ÷∆µ∆µƒ…¡À∏°¢¿Æ∞»µƒ∆µ¬ 
-  80            ”√countwaring¿¥º∆À„¿Î…œ“ª¥Œ∞¥œ¬∞¥≈•µƒ ±º‰£®∑÷÷”£©
-  81            INT0 «÷ÿ÷√countwaring
-  82            INT1 «øÿ÷∆æØ±® «∑Ò∆Ù∂Ø
-  83          */
-  84          void main(void){
-  85   1          SP = 0x60;
-  86   1        YELLOW = 1;//÷±Ω”ÀÕP1
-  87   1          RED = 1;
-  88   1        BUZZER = 1;
-  89   1          XBYTE[COM8255] = 0x43;
-  90   1          TH0 = (65536-LENGTH)/256;
-  91   1          TL0 = (65536-LENGTH)%256;
-  92   1          TMOD = 0x11;
-  93   1          TCON = 0x05;
-  94   1          IP = 0x01;
-  95   1          IPH = 0x03;
-  96   1          IE = 0x87;//10000111
-  97   1          TR0 = 1;
-  98   1          while(1){
-  99   2            display(SEC,MIN,HOUR);
- 100   2            while(!DISPLAY){
- 101   3                for(x = 0;x<100;x++) {XBYTE[PA8255]=0x3D;XBYTE[PB8255]=table[iADDR[0]/10];XBYTE[PA8255]=0x3E;XBYTE[PB
+  54   1         P0=0xbf;
+  55   1         delayms(5);
+  56   1      */
+  57   1         XBYTE[PA8255]=0x3B; //111011                                         //œ‘ æ∑÷∏ˆŒª
+  58   1         XBYTE[PB8255]=table[min1%10]&0x7f;
+  59   1         delayms(3);
+  60   1      
+  61   1         XBYTE[PA8255]=0x37; //110111                                         //œ‘ æ∑÷ ÆŒª
+  62   1         XBYTE[PB8255]=table[min1/10];
+  63   1         delayms(3);
+  64   1      /*
+  65   1         P2=0x04;                              //œ‘ æ∫·œﬂ
+  66   1         P0=0xbf;
+  67   1         delayms(5);
+  68   1      */
+  69   1         XBYTE[PA8255]=0x2F;         //101111                                  //œ‘ æ ±∏ˆŒª
+  70   1         XBYTE[PB8255]=table[hour1%10]&0x7f;    //∞À∂Œ ˝¬Îπ‹œ‘ æ–° ˝µ„Ωˆ–Ë“™‘⁄∂Œ—°¬Î∫Û + &0x7F !!!
+  71   1         delayms(3);
+  72   1      
+  73   1         XBYTE[PA8255]=0x1f;//011111
+  74   1         XBYTE[PB8255]=table[hour1/10];
+  75   1         delayms(3);
+  76   1      }
+  77          
+  78          /*
+  79            T0”√¿¥œ‘ æ ±º‰
+  80            T1”√¿¥øÿ÷∆µ∆µƒ…¡À∏°¢¿Æ∞»µƒ∆µ¬ 
+  81            ”√countwaring¿¥º∆À„¿Î…œ“ª¥Œ∞¥œ¬∞¥≈•µƒ ±º‰£®∑÷÷”£©
+  82            INT0 «÷ÿ÷√countwaring
+  83            INT1 «øÿ÷∆æØ±® «∑Ò∆Ù∂Ø
+  84          */
+  85          void main(void){
+  86   1          SP = 0x60;
+  87   1        YELLOW = 1;//÷±Ω”ÀÕP1
+  88   1          RED = 1;
+  89   1        BUZZER = 1;
+  90   1          XBYTE[COM8255] = 0x43;
+  91   1          TH0 = (65536-LENGTH)/256;
+  92   1          TL0 = (65536-LENGTH)%256;
+  93   1          TMOD = 0x11;
+  94   1          TCON = 0x05;
+  95   1          IP = 0x01;
+  96   1          IPH = 0x03;
+  97   1          IE = 0x87;//10000111
+  98   1          TR0 = 1;
+  99   1          while(1){
+ 100   2            display(SEC,MIN,HOUR);
+ 101   2            while(!DISPLAY){
+ 102   3                for(x = 0;x<100;x++) {XBYTE[PA8255]=0x3D;XBYTE[PB8255]=table[iADDR[0]/10];XBYTE[PA8255]=0x3E;XBYTE[PB
              -8255]=table[iADDR[0]%10];}
- 102   3                delayms(500);
- 103   3              for(j = 0;j < iADDR[0];j++){
- 104   4                for(x = 0;x<100;x++) display(iADDR[3 + j*3],iADDR[2 + j*3],iADDR[1 + j*3]);
- 105   4                delayms(500);
- 106   4              }
- 107   3            }
- 108   2          }
- 109   1      }
- 110          void exint0(void) interrupt 0 {  // Ω´æØ±®º∆ ±«Â0
- 111   1        countwaring = 0;
- 112   1        YELLOW = 1;
- 113   1          RED = 1;
- 114   1        BUZZER = 1;
-C51 COMPILER V9.60.0.0   CLOCK1                                                            12/24/2019 13:08:43 PAGE 3   
+ 103   3                delayms(500);
+ 104   3              for(j = 0;j < iADDR[0];j++){
+ 105   4                for(x = 0;x<100;x++) display(iADDR[3 + j*3],iADDR[2 + j*3],iADDR[1 + j*3]);
+ 106   4                delayms(500);
+ 107   4              }
+ 108   3            }
+ 109   2          }
+ 110   1      }
+ 111          void exint0(void) interrupt 0 {  // Ω´æØ±®º∆ ±«Â0
+ 112   1        countwaring = 0;
+ 113   1        YELLOW = 1;
+ 114   1          RED = 1;
+C51 COMPILER V9.60.0.0   CLOCK1                                                            12/24/2019 13:40:16 PAGE 3   
 
- 115   1        TR1 = 0;
- 116   1      }
- 117          void exint1(void) interrupt 2 {  // ∆Ù/Õ£±®æØπ¶ƒ‹
- 118   1        ET1 = !ET1;
- 119   1        countwaring = 0;
- 120   1        TR1=0;
- 121   1        YELLOW = 1;//÷±Ω”ÀÕP1
- 122   1          RED = 1;
- 123   1        BUZZER = 1; 
- 124   1        flagwaringstart = !flagwaringstart;  // øÿ÷∆æØ∏ÊŒª£¨∑¿÷π‘⁄T0÷–∂œ÷–∆Ù∂ØT1
- 125   1      }
- 126          void timer1int(void) interrupt 3{  // ∂® ±∆˜1 øÿ÷∆∫Ï/ª∆µ∆…¡À∏°¢¿Æ∞»œÏ…˘µƒ∆µ¬ 
- 127   1        if(countwaring<11){TH1 = 10000/256;TL1 = 10000%256;YELLOW = 1;RED = 1;}
- 128   1        if(countwaring>10 && countwaring<60 ){TH1 = 0;TL1 = 0;YELLOW = !YELLOW;RED = 1;}
- 129   1        if(countwaring>59){TH1 = 30000/256;TL1 = 30000%256;YELLOW = 1;RED = !RED;}
- 130   1        BUZZER = !BUZZER;
- 131   1      }
- 132          void timer0int(void) interrupt 1{  // Õ®π˝T0÷–∂œ œ‘ æ ±º‰¥”ø™ª˙µΩœ÷‘⁄µƒ ±º‰
- 133   1        TH0 = (65536-LENGTH)/256;
- 134   1        TL0 = (65536-LENGTH)%256; 
- 135   1        count1s++;
- 136   1        /*
- 137   1          ¿Î…œ“ª¥Œ∞¥œ¬∞¥≈•π˝»•11min∆Ù∂Øª∆µ∆…¡À∏£¨µ±countwaring = 11£®∞¥∑÷÷”º”“ª£©
- 138   1           ±”–∂‡¥Œ÷–∂œµƒ∑¢…˙£¨∂¯if‘⁄countwaring = 11 ±÷ªƒ‹÷¥––“ª¥Œ£¨”–SEC∫Õcount1sµƒ≈–∂œ
- 139   1          flagwaringstart£¨Õ®π˝P3.3øÿ÷∆∑¿÷πT1‘⁄Õ£÷π±®æØ ±∆Ù∂Ø
- 140   1          countwaring = 60 ±£¨Õ¨¿Ì 
- 141   1        */
- 142   1        if(countwaring == 10 && !SEC && count1s == 1 && flagwaringstart)  
- 143   1            { TR1 = 0;
- 144   2              TH1 = 0;
- 145   2              TL1 = 0;
- 146   2              TR1 = 1;
- 147   2            }
- 148   1          if(countwaring == 11 && !SEC && count1s == 1 && flagwaringstart)  
- 149   1          { TR1 = 0;
- 150   2            TH1 = 10000/256;
- 151   2            TL1 = 10000%256;
- 152   2            TR1 = 1;
- 153   2          }
- 154   1        if(countwaring == 60 && !SEC && count1s == 1 && flagwaringstart){  // ¿Î…œ“ª¥Œ∞¥œ¬∞¥≈•π˝»•60min ∫Ïµ∆…¡À∏ 
+ 115   1        BUZZER = 1;
+ 116   1        TR1 = 0;
+ 117   1      }
+ 118          void exint1(void) interrupt 2 {  // ∆Ù/Õ£±®æØπ¶ƒ‹
+ 119   1        ET1 = !ET1;
+ 120   1        countwaring = 0;
+ 121   1        TR1=0;
+ 122   1        YELLOW = 1;//÷±Ω”ÀÕP1
+ 123   1          RED = 1;
+ 124   1        BUZZER = 1; 
+ 125   1        flagwaringstart = !flagwaringstart;  // øÿ÷∆æØ∏ÊŒª£¨∑¿÷π‘⁄T0÷–∂œ÷–∆Ù∂ØT1
+ 126   1      }
+ 127          void timer1int(void) interrupt 3{  // ∂® ±∆˜1 øÿ÷∆∫Ï/ª∆µ∆…¡À∏°¢¿Æ∞»œÏ…˘µƒ∆µ¬ 
+ 128   1        if(countwaring<11){TH1 = 10000/256;TL1 = 10000%256;YELLOW = 1;RED = 1;}
+ 129   1        if(countwaring>10 && countwaring<60 ){TH1 = 0;TL1 = 0;YELLOW = !YELLOW;RED = 1;}
+ 130   1        if(countwaring>59){TH1 = 30000/256;TL1 = 30000%256;YELLOW = 1;RED = !RED;}
+ 131   1        BUZZER = !BUZZER;
+ 132   1      }
+ 133          void timer0int(void) interrupt 1{  // Õ®π˝T0÷–∂œ œ‘ æ ±º‰¥”ø™ª˙µΩœ÷‘⁄µƒ ±º‰
+ 134   1        TH0 = (65536-LENGTH)/256;
+ 135   1        TL0 = (65536-LENGTH)%256; 
+ 136   1        count1s++;
+ 137   1        /*
+ 138   1          ¿Î…œ“ª¥Œ∞¥œ¬∞¥≈•π˝»•11min∆Ù∂Øª∆µ∆…¡À∏£¨µ±countwaring = 11£®∞¥∑÷÷”º”“ª£©
+ 139   1           ±”–∂‡¥Œ÷–∂œµƒ∑¢…˙£¨∂¯if‘⁄countwaring = 11 ±÷ªƒ‹÷¥––“ª¥Œ£¨”–SEC∫Õcount1sµƒ≈–∂œ
+ 140   1          flagwaringstart£¨Õ®π˝P3.3øÿ÷∆∑¿÷πT1‘⁄Õ£÷π±®æØ ±∆Ù∂Ø
+ 141   1          countwaring = 60 ±£¨Õ¨¿Ì 
+ 142   1        */
+ 143   1        if(countwaring == 10 && !SEC && count1s == 1 && flagwaringstart)  
+ 144   1            { TR1 = 0;
+ 145   2              TH1 = 0;
+ 146   2              TL1 = 0;
+ 147   2              TR1 = 1;
+ 148   2            }
+ 149   1          if(countwaring == 11 && !SEC && count1s == 1 && flagwaringstart)  
+ 150   1          { TR1 = 0;
+ 151   2            TH1 = 10000/256;
+ 152   2            TL1 = 10000%256;
+ 153   2            TR1 = 1;
+ 154   2          }
+ 155   1        if(countwaring == 60 && !SEC && count1s == 1 && flagwaringstart){  // ¿Î…œ“ª¥Œ∞¥œ¬∞¥≈•π˝»•60min ∫Ïµ∆…¡À∏ 
              -¿Æ∞»∆µ¬ º”øÏ ±£¥Ê ˝æ›÷¡iADDR ˝◊È÷–
- 155   2          TR1 = 0;
- 156   2          TH1 = 30000/256;
- 157   2          TL1 = 30000%256;
- 158   2          TR1 = 1;
- 159   2          
- 160   2          iADDR[sleepcount*3+1] = HOUR;
- 161   2          iADDR[sleepcount*3+2] = MIN;
- 162   2          iADDR[sleepcount*3+3] = SEC;
- 163   2          iADDR[0] = ++sleepcount;
- 164   2        }
- 165   1        if(count1s>19)//º∆ ˝ ±∑÷√Î
- 166   1        {
- 167   2          count1s = 0;
- 168   2          SEC++;
- 169   2          if(SEC>59){
- 170   3            SEC = 0;
- 171   3            MIN++;
- 172   3            countwaring++;
- 173   3            if(MIN>59){
- 174   4              MIN = 0;
- 175   4              HOUR++;
-C51 COMPILER V9.60.0.0   CLOCK1                                                            12/24/2019 13:08:43 PAGE 4   
+ 156   2          TR1 = 0;
+ 157   2          TH1 = 30000/256;
+ 158   2          TL1 = 30000%256;
+ 159   2          TR1 = 1;
+ 160   2          
+ 161   2          iADDR[sleepcount*3+1] = HOUR;
+ 162   2          iADDR[sleepcount*3+2] = MIN;
+ 163   2          iADDR[sleepcount*3+3] = SEC;
+ 164   2          iADDR[0] = ++sleepcount;
+ 165   2        }
+ 166   1        if(count1s>19)//º∆ ˝ ±∑÷√Î
+ 167   1        {
+ 168   2          count1s = 0;
+ 169   2          SEC++;
+ 170   2          if(SEC>59){
+ 171   3            SEC = 0;
+ 172   3            MIN++;
+ 173   3            countwaring++;
+ 174   3            if(MIN>59){
+ 175   4              MIN = 0;
+C51 COMPILER V9.60.0.0   CLOCK1                                                            12/24/2019 13:40:16 PAGE 4   
 
- 176   4              if(HOUR>23)HOUR = 0;
- 177   4            }
- 178   3          }
- 179   2        }
- 180   1      }
+ 176   4              HOUR++;
+ 177   4              if(HOUR>23)HOUR = 0;
+ 178   4            }
+ 179   3          }
+ 180   2        }
+ 181   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
